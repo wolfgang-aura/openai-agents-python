@@ -652,11 +652,11 @@ class TestUnixLocalApplyPatchRename:
     @pytest.mark.asyncio
     @pytest.mark.requires_native_macos_sandbox
     async def test_move_to_an_existing_directory_keeps_the_source(self, tmp_path: Path) -> None:
-        """The guard against a directory destination is a shell test, so run a real shell.
+        """A directory destination is refused, and the source is where it was.
 
-        `mv` given an existing directory moves the source inside it and exits 0. A caller that
-        removes the source on that exit code deletes the file. The unit tests model this; this
-        one runs it.
+        `mv` given an existing directory moves the source inside it and exits 0, and a caller
+        that removes the source on that exit code deletes the file. The rename here goes
+        through `os.rename`, which fails instead. The unit tests model this; this one runs it.
         """
         workspace = tmp_path / "workspace"
         client = UnixLocalSandboxClient()

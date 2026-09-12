@@ -1164,6 +1164,10 @@ class BaseSandboxSession(abc.ABC):
         `mv -T` would say this directly and is GNU-only, so it is unavailable on the BSD
         userland this also has to run against.
 
+        This is the shell fallback for backends that only offer `exec`. A backend with
+        direct filesystem access, such as UnixLocal, overrides it with a descriptor-relative
+        `os.rename`, so the path it validated is the entry it renames.
+
         :param source: Path to move.
         :param destination: Path to move it to.
         :param user: Optional sandbox user to move as.
@@ -1209,6 +1213,9 @@ class BaseSandboxSession(abc.ABC):
         `test -ef` resolves symlinks, so a symlink and the file it points at are the same
         file by this test while being two directory entries. Pass ``follow_symlinks=False``
         when the caller needs to distinguish those entries.
+
+        This is the shell fallback for backends that only offer `exec`. UnixLocal overrides
+        it with a descriptor-relative `stat` on both entries.
 
         :param left: First path to compare.
         :param right: Second path to compare.
